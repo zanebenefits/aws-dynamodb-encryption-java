@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.encryption.DoEncrypt;
 import com.amazonaws.services.dynamodbv2.datamodeling.encryption.DoNotEncrypt;
 import com.amazonaws.services.dynamodbv2.datamodeling.encryption.DoNotTouch;
 import com.amazonaws.services.dynamodbv2.datamodeling.encryption.DynamoDBEncryptor;
@@ -92,7 +93,7 @@ public class AttributeEncryptor implements AttributeTransformer {
         if (attributeFlags == null) {
             attributeFlags = new HashMap<String, Set<EncryptionFlags>>();
 
-            final boolean encryptionEnabled = !clazz.isAnnotationPresent(DoNotEncrypt.class);
+            final boolean classLevelEncryptionEnabled = !clazz.isAnnotationPresent(DoNotEncrypt.class);
             final boolean doNotTouch = clazz.isAnnotationPresent(DoNotTouch.class);
 
             if (!doNotTouch) {
@@ -102,7 +103,8 @@ public class AttributeEncryptor implements AttributeTransformer {
                 for (Method getter : reflector.getRelevantGetters(clazz)) {
                     final EnumSet<EncryptionFlags> flags = EnumSet.noneOf(EncryptionFlags.class);
                     if (!getter.isAnnotationPresent(DoNotTouch.class)) {
-                        if (encryptionEnabled && !getter.isAnnotationPresent(DoNotEncrypt.class)
+                        if ((classLevelEncryptionEnabled && !getter.isAnnotationPresent(DoNotEncrypt.class) ||
+                          (!classLevelEncryptionEnabled) && getter.isAnnotationPresent(DoEncrypt.class))
                                 && !getter.equals(hashKeyGetter) && !getter.equals(rangeKeyGetter)
                                 && !reflector.isVersionAttributeGetter(getter)) {
                             flags.add(EncryptionFlags.ENCRYPT);

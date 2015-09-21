@@ -3,7 +3,7 @@
   
   <groupId>com.amazonaws</groupId>
   <artifactId>aws-dynamodb-encryption-java</artifactId>
-  <version>0.0.3-SNAPSHOT</version>
+  <version>0.0.4-ZB</version>
   <packaging>jar</packaging>
   
   <name>aws-dynamodb-encryption-java</name>
@@ -37,7 +37,7 @@
     <dependency>
       <groupId>com.amazonaws</groupId>
       <artifactId>aws-java-sdk</artifactId>
-      <version>1.9.13</version>
+      <version>1.10.20</version>
     </dependency>
 
     <dependency>
